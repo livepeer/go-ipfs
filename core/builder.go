@@ -209,7 +209,7 @@ func setupNode(ctx context.Context, n *IpfsNode, cfg *BuildCfg) error {
 
 	if conf.Experimental.FilestoreEnabled {
 		// hash security
-		n.Filestore = filestore.NewFilestore(bs, n.Repo.FileManager())
+		n.Filestore = filestore.NewFilestore(wbs, n.Repo.FileManager())
 		n.Blockstore = bstore.NewGCBlockstore(n.Filestore, n.GCLocker)
 		n.Blockstore = &verifbs.VerifBSGC{GCBlockstore: n.Blockstore}
 	}

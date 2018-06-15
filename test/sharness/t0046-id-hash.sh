@@ -43,4 +43,32 @@ test_expect_success "can still fetch it" '
   test_cmp junk.txt actual
 '
 
+test_expect_success "enable filestore" '
+  ipfs config --json Experimental.FilestoreEnabled true
+'
+
+test_expect_success "can fetch random id hash (filestore enabled)" '
+  ipfs cat $ID_HASH0 > expected &&
+  echo $ID_HASH0_CONTENTS > actual &&
+  test_cmp expected actual
+'
+
+test_expect_success "can pin random id hash (filestore enabled)" '
+  ipfs pin add $ID_HASH0
+'
+
+test_expect_success "ipfs add succeeds with id hash and --nocopy" '
+  echo "djkd7jdkd7jkHHG" > junk.txt &&
+  HASH=$(ipfs add -q --hash=id --nocopy junk.txt)
+'
+
+test_expect_success "content not actually added (filestore enabled)" '
+  ipfs refs local | fgrep -q -v $HASH
+'
+
+test_expect_success "but can fetch it anyway (filestore enabled)" '
+  ipfs cat $HASH > actual &&
+  test_cmp junk.txt actual
+'
+
 test_done
